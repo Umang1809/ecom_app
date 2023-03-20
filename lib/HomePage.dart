@@ -1,14 +1,18 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ecom_app/AddProduct.dart';
 import 'package:ecom_app/DeviceInfo.dart';
 import 'package:ecom_app/LoginPage.dart';
 import 'package:ecom_app/ProfileInfo.dart';
 import 'package:ecom_app/ViewProduct.dart';
-// import 'package:ecom_app/ProfileInfouct.dart';
 import 'package:ecom_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+// import 'package:ecom_app/ProfileInfouct.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   static int cnt = 0;
@@ -19,6 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  ViewProductResult? dd;
   var bodyy = [
     ViewProduct(),
     AddProduct(),
@@ -27,6 +32,9 @@ class _HomePageState extends State<HomePage> {
   ];
 
   String? ProfilePhoto;
+  bool isSearch = false;
+  List<Map> searchProduct = [];
+  List Search = [];
 
   @override
   void initState() {
@@ -143,7 +151,25 @@ class _HomePageState extends State<HomePage> {
               centerTitle: true,
               titleSpacing: 5,
               backgroundColor: Color(0xFF265d51).withOpacity(0.1),
-              title: Text('ECOM APP'),
+              title: isSearch
+                  ? TextField(
+                      onChanged: (value) {
+                        if (value.isNotEmpty) {
+                          Search = [];
+                          for (int i = 0; i < dd!.productdata!.length; i++) {
+                            if (dd!.productdata![i].pNAME
+                                .toString()
+                                .toLowerCase()
+                                .contains(value.toLowerCase())) {
+                              Search.add(dd!.productdata![i]);
+                            }
+                          }
+                        } else {
+                          Search = searchProduct;
+                        }
+                      },
+                    )
+                  : Text('ECOM APP'),
               leading: IconButton(
                 onPressed: _handleMenuButtonPressed,
                 icon: ValueListenableBuilder<AdvancedDrawerValue>(
@@ -159,6 +185,25 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
+              actions: [
+                isSearch
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            Search = searchProduct;
+                            isSearch = false;
+                          });
+                        },
+                        icon: Icon(Icons.close))
+                    : IconButton(
+                        onPressed: () {
+                          setState(() {
+                            Search = searchProduct;
+                            isSearch = true;
+                          });
+                        },
+                        icon: Icon(Icons.search))
+              ],
             ),
             backgroundColor: Color(0xFF265d51),
             body: bodyy[HomePage.cnt],
@@ -286,5 +331,87 @@ class _HomePageState extends State<HomePage> {
     // NOTICE: Manage Advanced Drawer state through the Controller.
     // _advancedDrawerController.value = AdvancedDrawerValue.visible();
     _advancedDrawerController.showDrawer();
+  }
+
+  Future<void> forViewProduct() async {
+    DefaultCacheManager manager = new DefaultCacheManager();
+    manager.emptyCache();
+
+    Map data = {
+      "LoginId": LoginPage.pref!.getString("ID"),
+    };
+
+    var url =
+        Uri.parse('https://umang360.000webhostapp.com/ECOM/viewProduct.php');
+    var response = await http.post(url, body: data);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    Map<String, dynamic> mm = jsonDecode(response.body);
+
+    setState(() {
+      dd = ViewProductResult.fromJson(mm);
+    });
+  }
+}
+
+class ViewProductResult {
+  int? connection;
+  int? result;
+  List<Productdata>? productdata;
+
+  ViewProductResult({this.connection, this.result, this.productdata});
+
+  ViewProductResult.fromJson(Map<String, dynamic> json) {
+    connection = json['connection'];
+    result = json['result'];
+    if (json['productdata'] != null) {
+      productdata = <Productdata>[];
+      json['productdata'].forEach((v) {
+        productdata!.add(new Productdata.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['connection'] = this.connection;
+    data['result'] = this.result;
+    if (this.productdata != null) {
+      data['productdata'] = this.productdata!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Productdata {
+  String? iD;
+  String? uID;
+  String? pNAME;
+  String? pPRICE;
+  String? pDESC;
+  String? pPHOTO;
+
+  Productdata(
+      {this.iD, this.uID, this.pNAME, this.pPRICE, this.pDESC, this.pPHOTO});
+
+  Productdata.fromJson(Map<String, dynamic> json) {
+    iD = json['ID'];
+    uID = json['UID'];
+    pNAME = json['PNAME'];
+    pPRICE = json['PPRICE'];
+    pDESC = json['PDESC'];
+    pPHOTO = json['PPHOTO'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['ID'] = this.iD;
+    data['UID'] = this.uID;
+    data['PNAME'] = this.pNAME;
+    data['PPRICE'] = this.pPRICE;
+    data['PDESC'] = this.pDESC;
+    data['PPHOTO'] = this.pPHOTO;
+    return data;
   }
 }

@@ -371,7 +371,7 @@ class _UpdateProductState extends State<UpdateProduct> {
       "ProductName": ProductName,
       "ProductPrice": ProductPrice,
       "ProductDescription": ProductDescription,
-      "ImageData": Photo,
+      "ImageData": ImagePath != null ? Photo : '',
       "ImageName": widget.productdata.pPHOTO,
     };
     var url =
@@ -424,3 +424,4 @@ class UpdateResult {
     return data;
   }
 }
+
