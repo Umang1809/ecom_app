@@ -4,18 +4,19 @@ import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ecom_app/HomePage.dart';
+import 'package:ecom_app/ViewProduct.dart';
+// import 'package:ecom_app/HomePage.dart';
 import 'package:ecom_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-import 'ViewProduct.dart';
+// import 'ViewProduct.dart';
 
 class UpdateProduct extends StatefulWidget {
+  UpdateProduct(this.productdata);
   Productdata productdata;
-  UpdateProduct(Productdata this.productdata);
-
   @override
   State<UpdateProduct> createState() => _UpdateProductState();
 }
@@ -366,6 +367,13 @@ class _UpdateProductState extends State<UpdateProduct> {
 
   Future<void> forUpdateProduct(String ProductName, String ProductPrice,
       String ProductDescription, String Photo) async {
+
+    print("IMAGENAMEEEEEEEEEEEEEEEEEEEee: ${widget.productdata.pPHOTO}" );
+    String? inn;
+    inn=widget.productdata.pPHOTO;
+    String lll=inn!.split('/')[1].split('.')[0];
+    print("LISTTTTTTTTTTTTTTTTTTTTTTT$lll");
+
     Map data = {
       "ProductID": widget.productdata.iD,
       "ProductName": ProductName,
@@ -373,6 +381,7 @@ class _UpdateProductState extends State<UpdateProduct> {
       "ProductDescription": ProductDescription,
       "ImageData": ImagePath != null ? Photo : '',
       "ImageName": widget.productdata.pPHOTO,
+      // "ImageName": lll,
     };
     var url =
         Uri.parse('https://umang360.000webhostapp.com/ECOM/updateProduct.php');
@@ -424,4 +433,3 @@ class UpdateResult {
     return data;
   }
 }
-

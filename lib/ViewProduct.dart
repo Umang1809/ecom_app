@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecom_app/LoginPage.dart';
 import 'package:ecom_app/UpdateProduct.dart';
+import 'package:ecom_app/ViewFullProduct.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
@@ -132,6 +133,7 @@ class _ViewProductState extends State<ViewProduct> {
                                 : dd!.productdata!.length,
                             itemBuilder: (context, index) {
                               return GridTile(
+
                                 child: Stack(children: [
                                   Container(
                                     // height: 300,
@@ -188,14 +190,32 @@ class _ViewProductState extends State<ViewProduct> {
                                     // width: 200,
 
                                     color: Colors.transparent,
-                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 120),
                                     child: Card(
                                       color: Colors.transparent,
                                       elevation: 50,
-                                      child: Image(
-                                        image: NetworkImage(
-                                            "https://umang360.000webhostapp.com/ECOM/${dd!.productdata![index].pPHOTO}"),
-                                        fit: BoxFit.contain,
+                                      child: InkWell(
+                                        onTap: () {
+
+                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                                            return ViewFullProduct(dd!.productdata![index]);
+                                          },));
+                                        },
+                                        child: PageView(
+                                          children: [
+                                            Image(
+                                              image: NetworkImage(
+                                                  "https://umang360.000webhostapp.com/ECOM/${dd!.productdata![index].pPHOTO}"),
+                                              fit: BoxFit.contain,
+                                            ),
+                                            Image(
+                                              image: NetworkImage(
+                                                  "https://umang360.000webhostapp.com/ECOM/${dd!.productdata![index].p2PHOTO}"),
+
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -237,6 +257,7 @@ class _ViewProductState extends State<ViewProduct> {
                                         InkWell(
                                           onTap: () {
                                             forDeleteProduct(index);
+                                            
                                           },
                                           child: Text("DELETE",
                                               style: TextStyle(
@@ -314,9 +335,16 @@ class Productdata {
   String? pPRICE;
   String? pDESC;
   String? pPHOTO;
+  String? p2PHOTO;
 
   Productdata(
-      {this.iD, this.uID, this.pNAME, this.pPRICE, this.pDESC, this.pPHOTO});
+      {this.iD,
+      this.uID,
+      this.pNAME,
+      this.pPRICE,
+      this.pDESC,
+      this.pPHOTO,
+      this.p2PHOTO});
 
   Productdata.fromJson(Map<String, dynamic> json) {
     iD = json['ID'];
@@ -325,6 +353,7 @@ class Productdata {
     pPRICE = json['PPRICE'];
     pDESC = json['PDESC'];
     pPHOTO = json['PPHOTO'];
+    p2PHOTO = json['PPHOTO2'];
   }
 
   Map<String, dynamic> toJson() {
@@ -335,6 +364,7 @@ class Productdata {
     data['PPRICE'] = this.pPRICE;
     data['PDESC'] = this.pDESC;
     data['PPHOTO'] = this.pPHOTO;
+    data['PPHOTO2'] = this.p2PHOTO;
     return data;
   }
 }

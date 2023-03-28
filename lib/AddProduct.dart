@@ -21,6 +21,8 @@ class AddProduct extends StatefulWidget {
 class _AddProductState extends State<AddProduct> {
   File? ProfilePhotoP;
   String? ImagePath;
+  String? ImagePath2;
+  List Images = [];
 
   final picker = ImagePicker();
   void getImage() async {
@@ -31,6 +33,19 @@ class _AddProductState extends State<AddProduct> {
       setState(() {
         // ProfilePhotoP = File(pickedFile.path);
         ImagePath = pickedFile.path;
+        Images.add(ImagePath);
+      });
+    }
+  }
+
+  void getImage2() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    // ProfilePhoto = pickedFile as String?;
+
+    if (pickedFile != null) {
+      setState(() {
+        // ProfilePhotoP = File(pickedFile.path);
+        ImagePath2 = pickedFile.path;
       });
     }
   }
@@ -129,20 +144,38 @@ class _AddProductState extends State<AddProduct> {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                      margin: EdgeInsets.fromLTRB(50, 20, 50, 10),
-                      child: ImagePath == null
-                          ? CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              backgroundImage:
-                                  AssetImage("Photoss/ProfilePhoto.png"),
-                              radius: 70,
-                            )
-                          : CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              backgroundImage: FileImage(File(ImagePath!)),
-                              radius: 70,
-                            )),
+                  Row(
+                    children: [
+                      Container(
+                          margin: EdgeInsets.fromLTRB(30, 20, 50, 10),
+                          child: ImagePath == null
+                              ? CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage:
+                                      AssetImage("Photoss/ProfilePhoto.png"),
+                                  radius: 70,
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: FileImage(File(ImagePath!)),
+                                  radius: 70,
+                                )),
+                      Container(
+                          margin: EdgeInsets.fromLTRB(30, 20, 0, 10),
+                          child: ImagePath2 == null
+                              ? CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage:
+                                      AssetImage("Photoss/ProfilePhoto.png"),
+                                  radius: 70,
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: FileImage(File(ImagePath2!)),
+                                  radius: 70,
+                                )),
+                    ],
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -150,6 +183,16 @@ class _AddProductState extends State<AddProduct> {
                           onPressed: () {
                             setState(() {
                               getImage();
+                            });
+                          },
+                          icon: Icon(
+                            Icons.photo,
+                            color: Colors.white60,
+                          )),
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              getImage2();
                             });
                           },
                           icon: Icon(
@@ -297,6 +340,9 @@ class _AddProductState extends State<AddProduct> {
                               List<int> img =
                                   File(ImagePath!).readAsBytesSync();
                               String Photo = base64Encode(img);
+                              List<int> img2 =
+                                  File(ImagePath2!).readAsBytesSync();
+                              String Photo2 = base64Encode(img2);
 
                               setState(() {
                                 ProductName = _ProductName.text;
@@ -319,7 +365,7 @@ class _AddProductState extends State<AddProduct> {
                                       "Please Enter ProductDescription";
                                 } else {
                                   forAddProduct(ProductName, ProductPrice,
-                                      ProductDescription, Photo);
+                                      ProductDescription, Photo, Photo2);
                                 }
                               });
                             },
@@ -339,13 +385,14 @@ class _AddProductState extends State<AddProduct> {
   }
 
   Future<void> forAddProduct(String ProductName, String ProductPrice,
-      String ProductDescription, String Photo) async {
+      String ProductDescription, String Photo, String Photo2) async {
     Map data = {
       "LoginId": LoginPage.pref!.getString("ID"),
       "ProductName": ProductName,
       "ProductPrice": ProductPrice,
       "ProductDescription": ProductDescription,
       "Photo": Photo,
+      "Photo2": Photo2,
     };
     var url =
         Uri.parse('https://umang360.000webhostapp.com/ECOM/addProduct.php');

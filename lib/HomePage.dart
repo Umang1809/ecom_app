@@ -14,8 +14,11 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 // import 'package:ecom_app/ProfileInfouct.dart';
 import 'package:http/http.dart' as http;
 
+import 'MultipleImages.dart';
+
 class HomePage extends StatefulWidget {
   static int cnt = 0;
+  static List<Map> searchProduct = [];
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -29,11 +32,12 @@ class _HomePageState extends State<HomePage> {
     AddProduct(),
     ProfileInfo(),
     DeviceInfo(),
+    MultipleImages(),
   ];
 
   String? ProfilePhoto;
   bool isSearch = false;
-  List<Map> searchProduct = [];
+
   List Search = [];
 
   @override
@@ -44,6 +48,7 @@ class _HomePageState extends State<HomePage> {
     imageCache.clearLiveImages();
     forInternetConnectivity();
     forGetPrefranceValue();
+    forViewProduct();
   }
 
   void forGetPrefranceValue() {
@@ -156,16 +161,16 @@ class _HomePageState extends State<HomePage> {
                       onChanged: (value) {
                         if (value.isNotEmpty) {
                           Search = [];
-                          for (int i = 0; i < dd!.productdata!.length; i++) {
-                            if (dd!.productdata![i].pNAME
+                          for (int i = 0; i < dd!.productdataa!.length; i++) {
+                            if (dd!.productdataa![i].pNAME
                                 .toString()
                                 .toLowerCase()
                                 .contains(value.toLowerCase())) {
-                              Search.add(dd!.productdata![i]);
+                              Search.add(dd!.productdataa![i]);
                             }
                           }
                         } else {
-                          Search = searchProduct;
+                          Search = HomePage.searchProduct;
                         }
                       },
                     )
@@ -190,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                     ? IconButton(
                         onPressed: () {
                           setState(() {
-                            Search = searchProduct;
+                            Search = HomePage.searchProduct;
                             isSearch = false;
                           });
                         },
@@ -198,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                     : IconButton(
                         onPressed: () {
                           setState(() {
-                            Search = searchProduct;
+                            Search = HomePage.searchProduct;
                             isSearch = true;
                           });
                         },
@@ -280,6 +285,19 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {},
                       leading: Icon(Icons.settings),
                       title: Text('Settings'),
+                    ),ListTile(
+                      onTap: () {
+                        setState(() {
+                          HomePage.cnt = 4;
+                          Future.delayed(Duration(
+                            milliseconds: 200,
+                          )).then((value) {
+                            _advancedDrawerController.hideDrawer();
+                          });
+                        });
+                      },
+                      leading: Icon(Icons.image),
+                      title: Text('Add Multiple Images'),
                     ),
                     ListTile(
                       onTap: () {
@@ -358,17 +376,17 @@ class _HomePageState extends State<HomePage> {
 class ViewProductResult {
   int? connection;
   int? result;
-  List<Productdata>? productdata;
+  List<Productdata>? productdataa;
 
-  ViewProductResult({this.connection, this.result, this.productdata});
+  ViewProductResult({this.connection, this.result, this.productdataa});
 
   ViewProductResult.fromJson(Map<String, dynamic> json) {
     connection = json['connection'];
     result = json['result'];
     if (json['productdata'] != null) {
-      productdata = <Productdata>[];
+      productdataa = <Productdata>[];
       json['productdata'].forEach((v) {
-        productdata!.add(new Productdata.fromJson(v));
+        productdataa!.add(new Productdata.fromJson(v));
       });
     }
   }
@@ -377,14 +395,14 @@ class ViewProductResult {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['connection'] = this.connection;
     data['result'] = this.result;
-    if (this.productdata != null) {
-      data['productdata'] = this.productdata!.map((v) => v.toJson()).toList();
+    if (this.productdataa != null) {
+      data['productdata'] = this.productdataa!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Productdata {
+class Productdataa {
   String? iD;
   String? uID;
   String? pNAME;
@@ -392,10 +410,10 @@ class Productdata {
   String? pDESC;
   String? pPHOTO;
 
-  Productdata(
+  Productdataa(
       {this.iD, this.uID, this.pNAME, this.pPRICE, this.pDESC, this.pPHOTO});
 
-  Productdata.fromJson(Map<String, dynamic> json) {
+  Productdataa.fromJson(Map<String, dynamic> json) {
     iD = json['ID'];
     uID = json['UID'];
     pNAME = json['PNAME'];

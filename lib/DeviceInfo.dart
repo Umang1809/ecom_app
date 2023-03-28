@@ -24,6 +24,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                 child: Text("NO")),
             TextButton(
                 onPressed: () {
+                  print("1");
                   SystemNavigator.pop();
                 },
                 child: Text("Yes"))

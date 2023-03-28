@@ -49,6 +49,9 @@ dependencies:
   device_information:
   flutter_advanced_drawer:
   flutter_cache_manager:
+  carousel_slider:
+  photo_view:
+  dots_indicator:
 
 dev_dependencies:
   flutter_test:
