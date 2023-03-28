@@ -37,6 +37,7 @@ class _MultipleImagesState extends State<MultipleImages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF265d51),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -57,7 +58,7 @@ class _MultipleImagesState extends State<MultipleImages> {
             // ),
             Container(
               margin: EdgeInsets.all(15),
-              height: MediaQuery.of(context).size.height*0.31,
+              height: MediaQuery.of(context).size.height * 0.31,
               width: MediaQuery.of(context).size.width,
               // width: 300,
               // height: 300,
@@ -65,7 +66,9 @@ class _MultipleImagesState extends State<MultipleImages> {
                 scrollDirection: Axis.horizontal,
                 // shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1, mainAxisExtent: 185,),
+                  crossAxisCount: 1,
+                  mainAxisExtent: 185,
+                ),
                 itemCount: icnt,
                 itemBuilder: (context, index) {
                   return Container(
@@ -74,34 +77,49 @@ class _MultipleImagesState extends State<MultipleImages> {
                         shape: BoxShape.rectangle,
                         border: Border.all(width: 0.5)),
                     child: Images.length != index
-                        ? InkWell(   onLongPress: () {
-                      showDialog(context: context, builder: (context) {
-                        return AlertDialog(title: Text("Are You Sure To Remove Image ?"),actions: [
-                          TextButton(onPressed: () {
-
-                            Navigator.pop(context);
-                          }, child: Text("NO")),
-                          TextButton(onPressed: () {
-
-                            setState(() {
-                              icnt-=1;
-                              Images.removeAt(index);
-                            });
-                            Navigator.pop(context);
-                          }, child: Text("YES")),
-                        ],);
-                      },);
-                    },child: Image(image: FileImage(File(Images[index].path)),fit: BoxFit.fill,))
+                        ? InkWell(
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title:
+                                        Text("Are You Sure To Remove Image ?"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("NO")),
+                                      TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              icnt -= 1;
+                                              Images.removeAt(index);
+                                            });
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("YES")),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Image(
+                              image: FileImage(File(Images[index].path)),
+                              fit: BoxFit.fill,
+                            ))
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                                icnt!=19?TextButton.icon(
-                                    onPressed: () {
-                                      getImage();
-                                    },
-                                    icon: Icon(Icons.photo),
-                                    label: Text("Add Image")):
-                                    Text("You Cant Add More Images")
+                                icnt != 19
+                                    ? TextButton.icon(
+                                        onPressed: () {
+                                          getImage();
+                                        },
+                                        icon: Icon(Icons.photo),
+                                        label: Text("Add Image"))
+                                    : Text("You Cant Add More Images")
                               ]),
                   );
                 },
@@ -125,18 +143,100 @@ class _MultipleImagesState extends State<MultipleImages> {
             // ElevatedButton(onPressed: () {
             //
             // }, child: Text("ADD ALL "))
-            Container(child: DotsIndicator(
-              dotsCount: Images.length==0?1:Images.length+1,
-              position: icnt==1?0:icnt-2,
-              // position: 2,
-              decorator: DotsDecorator(
-                color: Colors.black87, // Inactive color
-                activeColor: Colors.redAccent,
+            Container(
+                child: icnt != 3
+                    ? DotsIndicator(
+                        dotsCount: Images.length == 0 ? 1 : Images.length + 1,
+                        position: icnt == 1 ? 0 : icnt - 2,
+                        // position: 2,
+                        decorator: DotsDecorator(
+                          color: Colors.black38, // Inactive color
+                          activeColor: Colors.white38,
+                        ),
+                      )
+                    : Text("Scroll Images Horizontal To Add More Photos ")),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextFormField(
+                style: TextStyle(letterSpacing: 5),
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    hintText: "Enter Your Product Name",
+                    labelText: "PRODUCT NAME"),
               ),
-            ),),
-            ElevatedButton(onPressed: () {
-              print("VVVVVVVVVVVVVVVVVVVVVV$icnt");
-            }, child: Text("Hello"))
+            ),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextFormField(
+                style: TextStyle(letterSpacing: 5),
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    hintText: "Enter Your Product Price",
+                    labelText: "PRODUCT PRICE"),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    child: TextFormField(
+                      style: TextStyle(letterSpacing: 5),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                          hintText: "Stock",
+                          labelText: "STOCK"),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    child: TextFormField(
+                      style: TextStyle(letterSpacing: 5),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                          hintText: "Weight",
+                          labelText: "WEIGHT"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    child: TextFormField(
+                      style: TextStyle(letterSpacing: 5),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                          hintText: "Width",
+                          labelText: "WIDTH"),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    child: TextFormField(
+                      style: TextStyle(letterSpacing: 5),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                          hintText: "Height",
+                          labelText: "HEIGHT"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
